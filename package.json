@@ -19,6 +19,7 @@
   },
   "homepage": "https://playful-visualization.netlify.app/",
   "dependencies": {
+    "dat.gui": "^0.7.7",
     "matter-js": "^0.16.1"
   },
   "devDependencies": {
