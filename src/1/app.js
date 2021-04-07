@@ -13,27 +13,6 @@ import {
 } from "matter-js";
 import { data } from "./data";
 import { wordBox } from "./customBodies";
-import * as dat from "dat.gui";
-
-/**
- * Debug
- */
-const gui = new dat.GUI({ closed: false });
-
-const parameters = {
-  wordCount: 10,
-};
-gui
-  .add(parameters, "wordCount")
-  .min(2)
-  .max(100)
-  .step(1)
-  .onChange(() => {
-    if (t) {
-      clearTimeout(t);
-    }
-    t = setTimeout(init, 500);
-  });
 
 function init() {
   /**
@@ -46,8 +25,9 @@ function init() {
   let screenHeight = window.innerHeight;
   let clickedBody;
   const stickyBodies = [];
+  const stickyBodiesSet = new Set();
 
-  const words = data.slice(0, parameters.wordCount).map((item) => {
+  const words = data.slice(0, 40).map((item) => {
     item.score = Math.ceil(Math.random() * 100);
     return item;
   });
@@ -220,7 +200,10 @@ function init() {
       console.log(words[idA - 6].text, words[idB - 6].text, score);
       if (score >= 150) {
         // console.log("do sticky");
-        stickyBodies.push([bodyA, bodyB]);
+        if (!stickyBodiesSet.has(`${idA}${idB}`)) {
+          stickyBodiesSet.add(`${idA}${idB}`);
+          stickyBodies.push([bodyA, bodyB]);
+        }
         // console.log(bodyA);
       }
     }
