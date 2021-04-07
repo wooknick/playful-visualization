@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "Data visualization focused on playful interaction",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "parcel src/index.html",
+    "clear": "rm -rf dist/",
+    "build": "parcel build src/index.html",
+    "pre-deploy": "npm run clear & npm run build",
+    "deploy": "npm run pre-deploy && gh-pages -d dist"
   },
   "repository": {
     "type": "git",
@@ -13,8 +17,11 @@
   "bugs": {
     "url": "https://github.com/wooknick/playful-visualization/issues"
   },
-  "homepage": "https://wooknick.github.io/playful-visualization",
+  "homepage": "https://playful-visualization.netlify.app/",
   "dependencies": {
     "matter-js": "^0.16.1"
+  },
+  "devDependencies": {
+    "cssnano": "^4.1.11"
   }
 }
