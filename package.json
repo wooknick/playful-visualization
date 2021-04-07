@@ -1,0 +1,20 @@
+{
+  "name": "playful-visualization",
+  "version": "1.0.0",
+  "description": "Data visualization focused on playful interaction",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wooknick/playful-visualization.git"
+  },
+  "author": "Minwook Park",
+  "bugs": {
+    "url": "https://github.com/wooknick/playful-visualization/issues"
+  },
+  "homepage": "https://wooknick.github.io/playful-visualization",
+  "dependencies": {
+    "matter-js": "^0.16.1"
+  }
+}
