@@ -46,7 +46,7 @@ function init() {
         setTimeout(() => {
           mainInput.disabled = false;
           subInput.disabled = false;
-        }, 1500);
+        }, 2500);
       }, 1200);
     }
   }

@@ -59,7 +59,7 @@ class TextRoll {
     console.log(this.passingLetterDom);
   }
 
-  animateTo(newText, time = 2000, delay = 800) {
+  animateTo(newText, time = 2000, delay = 400) {
     // confirm text length
     this.updateText(this.text.padEnd(newText.length, " "));
 
