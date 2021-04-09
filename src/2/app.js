@@ -2,7 +2,7 @@ import TextRoll from "./textRoll";
 import MainImage from "./images/main.png";
 import SubImage from "./images/sub.png";
 import { artists } from "./data";
-import score from "./billboard.json";
+import data from "./billboard.json";
 
 function getDummy() {
   const data = [
@@ -45,7 +45,7 @@ class App {
     this.size = window.innerWidth / 32;
     // Data
     this.artistsData = artists;
-    this.score = score;
+    this.score = data.score;
   }
 
   init() {
