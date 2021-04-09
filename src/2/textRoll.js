@@ -54,6 +54,11 @@ class TextRoll {
     this.setText(newText);
   }
 
+  updateSize(newSize) {
+    this.size = newSize;
+    this.updateText(this.text);
+  }
+
   getStatus() {
     console.log(this.rollingLetterDom);
     console.log(this.passingLetterDom);

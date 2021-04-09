@@ -6,7 +6,7 @@
 
 .passing-letter {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-transform: uppercase;
   transform: translateY(0px);
