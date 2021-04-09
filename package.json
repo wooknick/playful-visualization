@@ -6,7 +6,7 @@
     "dev": "parcel src/index.html",
     "clear": "rm -rf dist/",
     "build": "parcel build src/index.html",
-    "pre-deploy": "npm run clear & npm run build",
+    "pre-deploy": "npm run clear && npm run build",
     "deploy": "npm run pre-deploy && gh-pages -d dist"
   },
   "repository": {
