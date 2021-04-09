@@ -178,7 +178,7 @@ class App {
     } else {
       nowInput = this.subInput;
     }
-    if (!this.artistsData.includes(nowInput.value)) {
+    if (!this.artistsData.some((artist) => artist[1] === nowInput.value)) {
       this.artists[this.artistType] = "";
       nowInput.value = "";
     }
