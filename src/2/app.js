@@ -218,6 +218,8 @@ class App {
     if (this.artists.mainArtist !== "" && this.artists.subArtist !== "") {
       this.beforeResult.innerHTML = `<span>${this.artists.mainArtist}</span><span>feat. ${this.artists.subArtist}</span>`;
       this.predict();
+    } else {
+      this.beforeResult.innerHTML = ``;
     }
   }
 
