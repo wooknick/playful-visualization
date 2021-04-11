@@ -19,8 +19,10 @@
   },
   "homepage": "https://playful-visualization.netlify.app/",
   "dependencies": {
+    "axios": "^0.21.1",
     "dat.gui": "^0.7.7",
-    "matter-js": "^0.16.1"
+    "matter-js": "^0.16.1",
+    "regenerator-runtime": "^0.13.7"
   },
   "devDependencies": {
     "cssnano": "^4.1.11"

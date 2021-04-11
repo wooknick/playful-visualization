@@ -1,24 +1,8 @@
+import "regenerator-runtime/runtime";
+import axios from "axios";
 import TextRoll from "./textRoll";
 import MainImage from "./images/main.png";
 import SubImage from "./images/sub.png";
-import { artists } from "./data";
-import data from "./billboard.json";
-
-function getDummy() {
-  const data = [
-    // "Get the Top",
-    // "Not Bad",
-    // "Garbage",
-    // "Wasting Time",
-    // "Amazing!!",
-    // "The Return of the King",
-    "Expected position is No.50",
-    "Expected position is No.1",
-    "Expected position is No.350",
-  ];
-
-  return data[Math.floor(Math.random() * data.length)];
-}
 
 class App {
   constructor() {
@@ -44,14 +28,31 @@ class App {
     this.blurT = undefined;
     this.size = window.innerWidth / 32;
     // Data
-    this.artistsData = artists;
-    this.score = data.score;
+    this.artistsData = undefined;
+    this.score = undefined;
   }
 
-  init() {
+  async init() {
     // TextRoll
     this.textRoll = new TextRoll(result, this.size);
     this.textRoll.setText("Try your Self");
+
+    try {
+      const {
+        data: { artists },
+      } = await axios.get(
+        "https://raw.githubusercontent.com/wooknick/playful-visualization/master/src/2/artists.json"
+      );
+      this.artistsData = artists;
+      const {
+        data: { score },
+      } = await axios.get(
+        "https://raw.githubusercontent.com/wooknick/playful-visualization/master/src/2/billboard.json"
+      );
+      this.score = score;
+    } catch (e) {
+      console.error("data fetch error");
+    }
 
     this.resize();
     // Event handler
