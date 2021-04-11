@@ -1,3 +1,5 @@
+import "regenerator-runtime/runtime";
+import axios from "axios";
 import {
   Body,
   Bodies,
@@ -11,210 +13,278 @@ import {
   Composites,
   Composite,
 } from "matter-js";
-import { data } from "./data";
-import { wordBox } from "./customBodies";
+import { artistBox } from "./customBodies";
 
-function init() {
-  /**
-   * Common Variables
-   */
-  const canvas = document.getElementById("app");
-  const ctx = canvas.getContext("2d");
-  const pixelRatio = window.devicePixelRatio > 1 ? 2 : 1;
-  let screenWidth = window.innerWidth;
-  let screenHeight = window.innerHeight;
-  let clickedBody;
-  const stickyBodies = [];
-  const stickyBodiesSet = new Set();
-
-  const words = data.slice(0, 40).map((item) => {
-    item.score = Math.ceil(Math.random() * 100);
-    return item;
-  });
-
-  /**
-   * Matter.js things
-   */
-  // const Engine = Matter.Engine,
-  //   Render = Matter.Render,
-  //   World = Matter.World,
-  //   Bodies = Matter.Bodies,
-  //   Mouse = Matter.Mouse,
-  //   MouseConstraint = Matter.MouseConstraint,
-  //   Events = Matter.Events;
-
-  /**
-   * Create Engine
-   */
-  const engine = Engine.create();
-  Engine.run(engine);
-
-  /**
-   * Create World
-   */
-  const world = engine.world;
-  world.gravity.x = 0;
-  world.gravity.y = 0;
-
-  /**
-   * Mouse Control
-   */
-  const mouse = Mouse.create(canvas);
-  const mouseConstraint = MouseConstraint.create(engine, {
-    mouse: mouse,
-    constraint: {
-      stiffness: 0.2,
-      render: {
-        // visible: true,
-      },
-    },
-  });
-  // mouse.pixelRatio = pixelRatio;
-  World.add(world, mouseConstraint);
-
-  /**
-   * Renderer
-   */
-  const renderer = Render.create({
-    canvas: canvas,
-    engine: engine,
-    options: {
-      width: screenWidth,
-      height: screenHeight,
-      // showVelocity: true,
-      // hasBounds: true,
-      wireframes: false,
-    },
-  });
-  // renderer.mouse = mouse;
-  // Render.setPixelRatio(renderer, "auto");
-  Render.run(renderer);
-
-  /**
-   * Bodies, World Maker
-   */
-
-  // Wall
-  const wd = 40;
-  const walls = [
-    // left, right, top, bottom
-    Bodies.rectangle(-wd / 2, screenHeight / 2, wd, screenHeight, {
-      isStatic: true,
-    }),
-    Bodies.rectangle(screenWidth + wd / 2, screenHeight / 2, wd, screenHeight, {
-      isStatic: true,
-    }),
-    Bodies.rectangle(screenWidth / 2, -wd / 2, screenWidth, wd, {
-      isStatic: true,
-    }),
-    Bodies.rectangle(screenWidth / 2, screenHeight + wd / 2, screenWidth, wd, {
-      isStatic: true,
-    }),
-  ];
-  World.add(world, walls);
-
-  const wordBodies = [];
-  words.forEach((word) => {
-    wordBodies.push(
-      wordBox(
-        word.text,
-        word.score,
-        screenWidth / 2 + (Math.random() - 0.5) * 700,
-        screenHeight / 2 + (Math.random() - 0.5) * 200,
-        100,
-        40
-      )
-    );
-  });
-  wordBodies.forEach((wordBody) => {
-    World.add(world, wordBody);
-  });
-
-  function getForce(from, to, force = 0.000005) {
-    const xv = to.x - from.x;
-    const yv = to.y - from.y;
-    // if (Math.abs(xv) < 80 || Math.abs(yv) < 80) {
-    //   force = 0;
-    // }
-    return { x: xv * force, y: yv * force };
+class App {
+  constructor() {
+    this.canvas = document.getElementById("app");
+    this.ctx = this.canvas.getContext("2d");
+    this.pixelRatio = window.devicePixelRatio > 1 ? 2 : 1;
+    this.screenWidth = window.innerWidth;
+    this.screenHeight = window.innerHeight;
+    this.clickedBody;
+    this.stickyBodies = [];
+    this.stickyBodiesSet = new Set();
+    this.resizeT = undefined;
+    this.artistsData = undefined;
+    this.score = undefined;
+    this.artistsCount = Math.floor(window.innerWidth / 80);
+    this.artists = [];
+    this.diffIdx = 6;
   }
-  /**
-   * Update Animation
-   */
-  let t = 0;
-  function update(e) {
-    // if (stickyBodies.length !== 0 && stickyBodies.length < 3) {
-    //   console.log(stickyBodies);
-    // }
-    stickyBodies.forEach((bodies) => {
-      Body.applyForce(
-        bodies[0],
-        bodies[0].position,
-        getForce(bodies[0].position, bodies[1].position)
+
+  async init() {
+    try {
+      const {
+        data: { artists },
+      } = await axios.get(
+        "https://raw.githubusercontent.com/wooknick/playful-visualization/master/src/2/artists.json"
       );
+      this.artistsData = artists;
+      this.artists = this.artistsData
+        .sort((a, b) => Math.random() - 0.5)
+        .slice(0, this.artistsCount);
+      const {
+        data: { score },
+      } = await axios.get(
+        "https://raw.githubusercontent.com/wooknick/playful-visualization/master/src/2/billboard.json"
+      );
+      this.score = score;
+    } catch (e) {
+      console.error("data fetch error");
+    }
+
+    // Engine
+    this.engine = Engine.create();
+    Engine.run(this.engine);
+
+    // World
+    this.world = this.engine.world;
+    this.world.gravity.x = 0;
+    this.world.gravity.y = 0;
+
+    // Renderer
+    this.renderer = Render.create({
+      canvas: this.canvas,
+      engine: this.engine,
+      options: {
+        width: this.screenWidth,
+        height: this.screenHeight,
+        wireframes: false,
+        background: "transparent",
+      },
+    });
+    Render.run(this.renderer);
+
+    this.addMouse();
+    this.makeWorld();
+
+    // Event Listener
+    Events.on(this.engine, "beforeUpdate", this.update.bind(this));
+
+    // Events.on(this.engine, "collisionStart", (e) => {
+    //   const pairs = e.pairs;
+    //   if (!this.clickedBody) {
+    //     return;
+    //   }
+    //   let bodyA, bodyB;
+    //   let idA, idB;
+    //   for (let i = 0; i < pairs.length; i++) {
+    //     const pair = pairs[i];
+    //     if (
+    //       pair.bodyA === this.clickedBody ||
+    //       pair.bodyB === this.clickedBody
+    //     ) {
+    //       // pair.bodyB.render.strokeStyle = colorA;
+    //       bodyA = pair.bodyA;
+    //       idA = pair.bodyA.id;
+    //       bodyB = pair.bodyB;
+    //       idB = pair.bodyB.id;
+    //     }
+    //   }
+    //   if (!!this.artists[idA - 6] && !!this.artists[idB - 6]) {
+    //     const score = this.score[this.artists[idA - 6][0]][
+    //       this.artists[idB - 6][0]
+    //     ];
+    //     console.log(this.artists[idA - 6][1], this.artists[idB - 6][1], score);
+    //     if (score < 30) {
+    //       // console.log("do sticky");
+    //       if (!this.stickyBodiesSet.has(`${idA}${idB}`)) {
+    //         this.stickyBodiesSet.add(`${idA}${idB}`);
+    //         this.stickyBodies.push([bodyA, bodyB]);
+    //       }
+    //       // console.log(bodyA);
+    //     }
+    //   }
+    // });
+    window.addEventListener("resize", () => {
+      if (this.resizeT) {
+        clearTimeout(this.resizeT);
+      }
+      this.resizeT = setTimeout(this.resize.bind(this), 300);
+    });
+  }
+
+  makeWorld() {
+    // Wall
+    const wd = 40;
+    const walls = [
+      // left, right, top, bottom
+      Bodies.rectangle(-wd / 2, this.screenHeight / 2, wd, this.screenHeight, {
+        isStatic: true,
+      }),
+      Bodies.rectangle(
+        this.screenWidth + wd / 2,
+        this.screenHeight / 2,
+        wd,
+        this.screenHeight,
+        {
+          isStatic: true,
+        }
+      ),
+      Bodies.rectangle(this.screenWidth / 2, -wd / 2, this.screenWidth, wd, {
+        isStatic: true,
+      }),
+      Bodies.rectangle(
+        this.screenWidth / 2,
+        this.screenHeight + wd / 2,
+        this.screenWidth,
+        wd,
+        {
+          isStatic: true,
+        }
+      ),
+    ];
+    World.add(this.world, walls);
+
+    this.artistBodies = [];
+    this.artists.forEach((artist) => {
+      this.artistBodies.push(
+        artistBox(
+          artist[1],
+          this.screenWidth / 2 + (Math.random() - 0.5) * 700,
+          this.screenHeight / 2 + (Math.random() - 0.5) * 200,
+          artist[1].length * 15,
+          40
+        )
+      );
+    });
+    this.artistBodies.forEach((artistBody) => {
+      World.add(this.world, artistBody);
+    });
+  }
+
+  clearWorld() {
+    World.clear(this.world, false);
+  }
+
+  addMouse() {
+    if (this.mouseConstraint) {
+      Events.off(this.mouseConstraint, "mousedown");
+    }
+    this.mouse = Mouse.create(this.canvas);
+    this.mouseConstraint = MouseConstraint.create(this.engine, {
+      mouse: this.mouse,
+      constraint: {
+        stiffness: 0.2,
+      },
+    });
+    World.add(this.world, this.mouseConstraint);
+    Events.on(
+      this.mouseConstraint,
+      "mousedown",
+      this.handleArtistClick.bind(this)
+    );
+  }
+
+  update(e) {
+    this.stickyBodies.forEach((bodies) => {
+      // Body.applyForce(
+      //   bodies[0],
+      //   bodies[0].position,
+      //   this.getForce(bodies[0].position, bodies[1].position)
+      // );
       Body.applyForce(
         bodies[1],
         bodies[1].position,
-        getForce(bodies[1].position, bodies[0].position)
+        this.getForce(bodies[1].position, bodies[0].position)
       );
     });
+    if (this.artistBodies) {
+      this.artistBodies
+        .filter((item) => !this.stickyBodies.includes(item))
+        .forEach((body) => {
+          Body.applyForce(
+            body,
+            body.position,
+            this.getForce(
+              {
+                x: this.screenWidth / 2,
+                y: this.screenHeight / 2,
+              },
+              body.position,
+              0.000003
+            )
+          );
+        });
+    }
     // const { timestamp } = e;
-    // world.gravity.x = Math.sin(timestamp / 1000);
-    // world.gravity.y = Math.cos(timestamp / 1000);
-    // t += 1;
-    // requestAnimationFrame(update.bind(this));
+    // this.world.gravity = {
+    //   x: Math.sin(timestamp / 1000) * 0.1,
+    //   y: Math.cos(timestamp / 1000) * 0.1,
+    // };
   }
-  Events.on(engine, "beforeUpdate", update);
-  // update();
 
-  /**
-   * Events
-   */
+  resize() {
+    this.clearWorld();
+    this.pixelRatio = window.devicePixelRatio > 1 ? 2 : 1;
+    this.screenWidth = window.innerWidth;
+    this.screenHeight = window.innerHeight;
+    this.canvas.width = this.screenWidth;
+    this.canvas.height = this.screenHeight;
+    this.diffIdx += 5 + Number(this.artistsCount);
+    this.artistsCount = Math.floor(window.innerWidth / 80);
+    this.artists = this.artistsData
+      .sort((a, b) => Math.random() - 0.5)
+      .slice(0, this.artistsCount);
+    this.addMouse();
+    this.makeWorld();
+  }
 
-  Events.on(mouseConstraint, "mousedown", (e) => {
-    clickedBody = mouseConstraint.body;
-    // clickedBody.isSensor = true;
-  });
-  Events.on(mouseConstraint, "mouseup", (e) => {
-    // clickedBody.isSensor = false;
-  });
-  Events.on(engine, "collisionStart", (e) => {
-    const pairs = e.pairs;
-    if (!clickedBody) {
-      return;
-    }
-    let bodyA, bodyB;
-    let idA, idB;
-    for (let i = 0; i < pairs.length; i++) {
-      const pair = pairs[i];
-      if (pair.bodyA === clickedBody || pair.bodyB === clickedBody) {
-        // pair.bodyB.render.strokeStyle = colorA;
-        bodyA = pair.bodyA;
-        idA = pair.bodyA.id;
-        bodyB = pair.bodyB;
-        idB = pair.bodyB.id;
-      }
-    }
-    if (!!words[idA - 6] && !!words[idB - 6]) {
-      const score = words[idA - 6].score + words[idB - 6].score;
-      console.log(words[idA - 6].text, words[idB - 6].text, score);
-      if (score >= 150) {
-        // console.log("do sticky");
-        if (!stickyBodiesSet.has(`${idA}${idB}`)) {
-          stickyBodiesSet.add(`${idA}${idB}`);
-          stickyBodies.push([bodyA, bodyB]);
+  handleArtistClick(e) {
+    this.clickedBody = this.mouseConstraint.body;
+    if (!!this.clickedBody) {
+      this.stickyBodiesSet.clear();
+      this.stickyBodies = [];
+      const idA = this.clickedBody.id;
+      const all = this.artistBodies.filter((b) => b.id !== idA);
+      all.forEach((b) => {
+        const idB = b.id;
+        const score = Math.min(
+          this.score[this.artists[idA - this.diffIdx][0]][
+            this.artists[idB - this.diffIdx][0]
+          ],
+          this.score[this.artists[idB - this.diffIdx][0]][
+            this.artists[idA - this.diffIdx][0]
+          ]
+        );
+        if (score < 10) {
+          if (!this.stickyBodiesSet.has(`${idA}${idB}`)) {
+            this.stickyBodiesSet.add(`${idA}${idB}`);
+            this.stickyBodies.push([this.clickedBody, b]);
+          }
         }
-        // console.log(bodyA);
-      }
+      });
     }
-  });
+  }
+
+  getForce(from, to, force = 0.000005) {
+    const xv = to.x - from.x;
+    const yv = to.y - from.y;
+    return { x: xv * force, y: yv * force };
+  }
 }
 
-window.onload = init;
-let t;
-window.onresize = () => {
-  if (t) {
-    clearTimeout(t);
-  }
-  t = setTimeout(init, 500);
+window.onload = () => {
+  new App().init();
 };
