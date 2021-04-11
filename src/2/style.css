@@ -7,6 +7,11 @@
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
+input {
+  user-select: text;
+  -moz-user-select: text;
+  -webkit-user-select: text;
+}
 html,
 body {
   width: 100%;
@@ -48,6 +53,7 @@ input[type="text"] {
   background-color: transparent;
   color: white;
   transition: color 0.5s ease-in-out;
+  font-family: "Exo", sans-serif;
 }
 input[type="text"]:disabled {
   color: transparent;
@@ -67,6 +73,7 @@ input[type="text"]::placeholder {
   align-items: center;
   text-align: start;
   padding: 0 1em;
+  font-family: "Lato", sans-serif;
 }
 #beforeResult {
   width: 100%;
@@ -77,7 +84,6 @@ input[type="text"]::placeholder {
   flex-wrap: wrap;
   align-content: flex-end;
   text-align: start;
-  text-transform: uppercase;
   padding-bottom: 1em;
 }
 #beforeResult > span {
@@ -119,7 +125,7 @@ img {
   object-fit: cover;
   object-position: left top;
   position: absolute;
-  filter: opacity(25%);
+  filter: opacity(15%);
 }
 #mainArtistList {
   /* left: calc((100vw - 45vw) / 2); */
@@ -129,20 +135,15 @@ img {
   /* left: calc((100vw - 45vw) / 2); */
 }
 .artistList {
-  /* background-color: white; */
   position: fixed;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   z-index: 20;
-  /* color: black; */
   overflow-y: scroll;
   opacity: 0;
-  /* transition: opacity 0.5s ease-in; */
-  /* top: 200px;
-  width: 50vw;
-  height: 200px; */
+  font-family: "Exo", sans-serif;
 }
 .searchResultItem {
   font-size: 2em;
