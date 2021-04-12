@@ -6,6 +6,10 @@
   -moz-user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  display: none;
 }
 input {
   user-select: text;

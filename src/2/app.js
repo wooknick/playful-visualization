@@ -35,7 +35,7 @@ class App {
   async init() {
     // TextRoll
     this.textRoll = new TextRoll(result, this.size);
-    this.textRoll.setText("Try your Self");
+    this.textRoll.setText("predict billboard hot 100");
 
     try {
       const {
@@ -72,7 +72,7 @@ class App {
       this.handleInput(e);
     });
     this.subInput.addEventListener("blur", (e) => {
-      e.target.placeholder = "Sub Artist";
+      e.target.placeholder = "Feat Artist";
       this.blurT = setTimeout(this.handleInputBlur.bind(this), 200);
     });
   }
@@ -117,7 +117,12 @@ class App {
     }
     this.searchT = setTimeout(() => {
       const searchResult = this.artistsData.filter((artist) => {
-        return artist[1].search(RegExp(term, "i")) > -1;
+        if (
+          artist[1] !== this.artists.mainArtist &&
+          artist[1] !== this.artists.subArtist
+        ) {
+          return artist[1].search(RegExp(term, "i")) > -1;
+        }
       });
       let topTen;
       if (term === "") {
