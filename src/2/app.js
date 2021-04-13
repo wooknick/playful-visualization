@@ -79,7 +79,6 @@ class App {
 
   handleInput(e) {
     const { name, value } = e.target;
-    this.artists[name] = value;
     this.artistType = name;
     this.handleArtistList(value);
   }
