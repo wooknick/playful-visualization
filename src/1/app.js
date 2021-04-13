@@ -38,7 +38,7 @@ class App {
       const {
         data: { artists },
       } = await axios.get(
-        "https://raw.githubusercontent.com/wooknick/playful-visualization/master/src/2/artists.json"
+        "https://raw.githubusercontent.com/hantaeha/billboard/main/src/json/artists.json"
       );
       this.artistsData = artists;
       this.artists = this.artistsData
@@ -47,7 +47,7 @@ class App {
       const {
         data: { score },
       } = await axios.get(
-        "https://raw.githubusercontent.com/wooknick/playful-visualization/master/src/2/billboard.json"
+        "https://raw.githubusercontent.com/hantaeha/billboard/main/src/json/billboard.json"
       );
       this.score = score;
     } catch (e) {
