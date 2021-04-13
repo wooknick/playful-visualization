@@ -1,8 +1,8 @@
 import "regenerator-runtime/runtime";
 import axios from "axios";
 import TextRoll from "./textRoll";
-import MainImage from "./images/main.png";
-import SubImage from "./images/sub.png";
+import default1 from "./images/default1.jpg";
+import default2 from "./images/default2.jpg";
 
 class App {
   constructor() {
@@ -41,13 +41,13 @@ class App {
       const {
         data: { artists },
       } = await axios.get(
-        "https://raw.githubusercontent.com/wooknick/playful-visualization/master/src/2/artists.json"
+        "https://raw.githubusercontent.com/hantaeha/billboard/main/src/json/artists.json"
       );
       this.artistsData = artists;
       const {
         data: { score },
       } = await axios.get(
-        "https://raw.githubusercontent.com/wooknick/playful-visualization/master/src/2/billboard.json"
+        "https://raw.githubusercontent.com/hantaeha/billboard/main/src/json/billboard.json"
       );
       this.score = score;
     } catch (e) {
@@ -196,7 +196,13 @@ class App {
       this.mainImage.style.opacity = 0;
       this.mainImage.ontransitionend = () => {
         if (this.artists.mainArtist !== "") {
-          this.mainImage.innerHTML = `<image src="${MainImage}"></image>`;
+          const img = document.createElement("img");
+          img.onerror = (e) => {
+            e.target.src = default1;
+          };
+          img.src = `https://raw.githubusercontent.com/hantaeha/billboard/main/src/images/${this.artists.mainIdx}.jpg`;
+          this.mainImage.innerHTML = ``;
+          this.mainImage.appendChild(img);
         } else {
           this.mainImage.innerHTML = ``;
         }
@@ -207,7 +213,13 @@ class App {
       this.subImage.style.opacity = 0;
       this.subImage.ontransitionend = () => {
         if (this.artists.subArtist !== "") {
-          this.subImage.innerHTML = `<image src="${SubImage}"></image>`;
+          const img = document.createElement("img");
+          img.onerror = (e) => {
+            e.target.src = default2;
+          };
+          img.src = `https://raw.githubusercontent.com/hantaeha/billboard/main/src/images/${this.artists.subIdx}.jpg`;
+          this.subImage.innerHTML = ``;
+          this.subImage.appendChild(img);
         } else {
           this.subImage.innerHTML = ``;
         }
