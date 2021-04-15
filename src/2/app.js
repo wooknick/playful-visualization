@@ -180,14 +180,11 @@ class App {
     let nowInput;
     if (this.artistType === "mainArtist") {
       nowInput = this.mainInput;
+      nowInput.value = this.artists.mainArtist;
     } else {
       nowInput = this.subInput;
+      nowInput.value = this.artists.subArtist;
     }
-    if (!this.artistsData.some((artist) => artist[1] === nowInput.value)) {
-      this.artists[this.artistType] = "";
-      nowInput.value = "";
-    }
-    this.showSelectedArtistImage();
   }
 
   showSelectedArtistImage() {
