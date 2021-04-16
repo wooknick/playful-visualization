@@ -158,3 +158,30 @@ img {
   cursor: pointer;
   color: rgb(193, 201, 46);
 }
+#screenTopButtonWrapper {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  z-index: 30;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+.screenTopButton {
+  background: white;
+  color: black;
+  width: 40px;
+  height: 40px;
+  margin-left: 20px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 28px;
+}
+.screenTopButton:hover {
+  cursor: pointer;
+  transform: translateY(-5px);
+  transition: transform 0.1s ease-in;
+}

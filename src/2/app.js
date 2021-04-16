@@ -18,6 +18,11 @@ class App {
     this.subImage = document.getElementById("subImage");
     this.beforeResult = document.getElementById("beforeResult");
     this.result = document.getElementById("result");
+    this.screenTopButtonWrapper = document.getElementById(
+      "screenTopButtonWrapper"
+    );
+    this.refreshButton = document.getElementById("refresh");
+    this.exchangeButton = document.getElementById("exchange");
     // Variables
     this.artists = { mainArtist: "", subArtist: "", mainIdx: -1, subIdx: -1 };
     this.artistType = undefined;
@@ -75,6 +80,46 @@ class App {
       e.target.placeholder = "Feat Artist";
       this.blurT = setTimeout(this.handleInputBlur.bind(this), 200);
     });
+    this.refreshButton.addEventListener("click", this.handleRefresh.bind(this));
+    this.exchangeButton.addEventListener(
+      "click",
+      this.handleExchange.bind(this)
+    );
+  }
+
+  handleRefresh(e) {
+    if (this.animating) {
+      return;
+    }
+    this.textRoll.updateText("predict billboard hot 100");
+    this.artists = { mainArtist: "", subArtist: "", mainIdx: -1, subIdx: -1 };
+    this.artistType = undefined;
+    this.mainImage.innerHTML = ``;
+    this.subImage.innerHTML = ``;
+    this.mainInput.value = "";
+    this.subInput.value = "";
+    this.beforeResult.innerHTML = ``;
+  }
+
+  handleExchange(e) {
+    if (this.animating) {
+      return;
+    }
+    if (!!this.artists.mainArtist && !!this.artists.subArtist) {
+      this.artists = {
+        mainArtist: this.artists.subArtist,
+        subArtist: this.artists.mainArtist,
+        mainIdx: this.artists.subIdx,
+        subIdx: this.artists.mainIdx,
+      };
+      const t = this.mainInput.value;
+      this.mainInput.value = this.subInput.value;
+      this.subInput.value = t;
+      const tImage = this.mainImage.innerHTML;
+      this.mainImage.innerHTML = this.subImage.innerHTML;
+      this.subImage.innerHTML = tImage;
+      this.showSelectedArtistName();
+    }
   }
 
   handleInput(e) {
@@ -249,6 +294,7 @@ class App {
         this.animating = true;
         this.mainInput.disabled = true;
         this.subInput.disabled = true;
+        this.screenTopButtonWrapper.style.opacity = 0;
         this.textRoll.animateTo(
           `Expected position is No.${predictScore}`,
           1000
@@ -257,6 +303,7 @@ class App {
           this.animating = false;
           this.mainInput.disabled = false;
           this.subInput.disabled = false;
+          this.screenTopButtonWrapper.style.opacity = 1;
         }, 2500);
       }, 1200);
     }
