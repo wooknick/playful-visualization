@@ -40,7 +40,7 @@ class App {
   async init() {
     // TextRoll
     this.textRoll = new TextRoll(result, this.size);
-    this.textRoll.setText("predict billboard hot 100");
+    this.textRoll.setText("Guess Billboard Hot 100?");
 
     try {
       const {
@@ -77,7 +77,7 @@ class App {
       this.handleInput(e);
     });
     this.subInput.addEventListener("blur", (e) => {
-      e.target.placeholder = "Feat Artist";
+      e.target.placeholder = "Feat. Artist";
       this.blurT = setTimeout(this.handleInputBlur.bind(this), 200);
     });
     this.refreshButton.addEventListener("click", this.handleRefresh.bind(this));
@@ -295,10 +295,7 @@ class App {
         this.mainInput.disabled = true;
         this.subInput.disabled = true;
         this.screenTopButtonWrapper.style.opacity = 0;
-        this.textRoll.animateTo(
-          `Expected position is No.${predictScore}`,
-          1000
-        );
+        this.textRoll.animateTo(`Predicted Rank is ${predictScore}`, 1000);
         setTimeout(() => {
           this.animating = false;
           this.mainInput.disabled = false;
