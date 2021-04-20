@@ -91,7 +91,7 @@ class App {
     if (this.animating) {
       return;
     }
-    this.textRoll.updateText("predict billboard hot 100");
+    this.textRoll.updateText("Guess Billboard Hot 100?");
     this.artists = { mainArtist: "", subArtist: "", mainIdx: -1, subIdx: -1 };
     this.artistType = undefined;
     this.mainImage.innerHTML = ``;
