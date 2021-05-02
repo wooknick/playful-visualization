@@ -19,7 +19,9 @@
   },
   "homepage": "https://playful-visualization.netlify.app/",
   "dependencies": {
+    "@observablehq/stdlib": "^3.4.1",
     "axios": "^0.21.1",
+    "d3": "^6.7.0",
     "dat.gui": "^0.7.7",
     "matter-js": "^0.16.1",
     "regenerator-runtime": "^0.13.7"
