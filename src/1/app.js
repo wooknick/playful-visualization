@@ -247,7 +247,7 @@ class App {
         this.getForce(
           this.clickedBody.position,
           { x: this.screenWidth / 2, y: this.screenHeight / 2 },
-          0.00003
+          0.00005
         )
       );
     }
