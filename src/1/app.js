@@ -130,28 +130,40 @@ class App {
     const wd = 40;
     const walls = [
       // left, right, top, bottom
-      Bodies.rectangle(-wd / 2, this.screenHeight / 2, wd, this.screenHeight, {
+      Bodies.rectangle(0, this.screenHeight / 2, wd, this.screenHeight, {
         isStatic: true,
+        render: {
+          fillStyle: "transparent",
+        },
       }),
       Bodies.rectangle(
-        this.screenWidth + wd / 2,
+        this.screenWidth,
         this.screenHeight / 2,
         wd,
         this.screenHeight,
         {
           isStatic: true,
+          render: {
+            fillStyle: "transparent",
+          },
         }
       ),
-      Bodies.rectangle(this.screenWidth / 2, -wd / 2, this.screenWidth, wd, {
+      Bodies.rectangle(this.screenWidth / 2, 0, this.screenWidth, wd, {
         isStatic: true,
+        render: {
+          fillStyle: "transparent",
+        },
       }),
       Bodies.rectangle(
         this.screenWidth / 2,
-        this.screenHeight + wd / 2,
+        this.screenHeight,
         this.screenWidth,
         wd,
         {
           isStatic: true,
+          render: {
+            fillStyle: "transparent",
+          },
         }
       ),
     ];
