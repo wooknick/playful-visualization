@@ -240,6 +240,17 @@ class App {
           );
         });
     }
+    if (this.clickedBody) {
+      Body.applyForce(
+        this.clickedBody,
+        this.clickedBody.position,
+        this.getForce(
+          this.clickedBody.position,
+          { x: this.screenWidth / 2, y: this.screenHeight / 2 },
+          0.00003
+        )
+      );
+    }
     // const { timestamp } = e;
     // this.world.gravity = {
     //   x: Math.sin(timestamp / 1000) * 0.1,
