@@ -39,7 +39,7 @@ class App {
     const span = document.createElement("span");
     span.innerText = s;
     span.classList.add("sentence");
-    span.style.animationDuration = `${Math.floor(Math.random() * 10) + 2}s`;
+    span.style.animationDelay = `${Math.random() * 3}s`;
     return span;
   }
 
